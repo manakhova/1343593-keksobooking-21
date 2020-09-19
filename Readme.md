@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг» [![Build status][travis-image]][travis-url]
 
 * Студент: [Татьяна Манахова](https://up.htmlacademy.ru/javascript/21/user/1343593).
-* Наставник: `Неизвестно`.
+* Наставник: [Раиль Сахавиев](https://up.htmlacademy.ru/javascript/21/user/1331891).
 
 ---
 
