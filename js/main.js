@@ -12,6 +12,8 @@ const type = {
 };
 const checkinTime = ['10:00', '13:00', '14:00'];
 const checkoutTime = ['10:00', '13:00', '14:00'];
+const features = ["wifi", "dishwasher", "parking", "washer", "elevator", "conditioner"];
+const photos = ["http://o0.github.io/assets/images/tokyo/hotel1.jpg", "http://o0.github.io/assets/images/tokyo/hotel2.jpg", "http://o0.github.io/assets/images/tokyo/hotel3.jpg"];
 const PIN_WIDTH = 50;
 const PIN_HEIGHT = 70;
 const MAP_WIDTH = 1200;
@@ -19,41 +21,59 @@ const MAP_HEIGHT_TOP = 130;
 const MAP_HEIGHT_BOTTOM = 630;
 
 // Рандомное число в диапазоне
-function randomInteger(min, max) {
-  let rand = min + Math.random() * (max + 1 - min);
-  return Math.floor(rand);
+function getRandomInteger(min, max) {
+  const random = min + Math.random() * (max + 1 - min);
+  return Math.floor(random);
 }
 
 // Рандомное свойство объекта
-function randomProperty(obj) {
-  let keys = Object.keys(obj);
-  return obj[keys[keys.length * Math.random() << 0]];
+function getRandomProperty(obj) {
+  const keys = Object.keys(obj);
+  return obj[keys[getRandomInteger(0, keys.length)]];
+}
+
+// Рандомное число удобств
+function getRandomFeatures(quantity) {
+  const featuresRandom = [];
+  for (let i = 0; i < quantity; i++) {
+    featuresRandom.push(features[getRandomInteger(0, features.length)]);
+  }
+  return featuresRandom;
+}
+
+// Рандомные фотографии
+function getRandomPhotos(quantity) {
+  const photosRandom = [];
+  for (let i = 0; i < quantity; i++) {
+    photosRandom.push(photos[getRandomInteger(0, photos.length)]);
+  }
+  return photosRandom;
 }
 
 
 function makeAdsArray(number) {
-  let ads = [];
+  const ads = [];
   for (let i = 0; i < number; i++) {
     ads.push({
       author: {
-        avatar: `img/avatars/user0${randomInteger(1, 8)}.png` // не соображу, как заставить числа не повторяться
+        avatar: `img/avatars/user0${getRandomInteger(1, 8)}.png` // не соображу, как заставить числа не повторяться
       },
       offer: {
         title: 'Предложение',
-        address: `${randomInteger(0, 1200) - PIN_WIDTH / 2}, ${randomInteger(130, 630) - PIN_HEIGHT}`,
-        price: randomInteger(1, 10000),
-        type: randomProperty(type),
-        rooms: randomInteger(1, 100),
-        guests: randomInteger(1, 100),
-        checkin: checkinTime[randomInteger(0, checkinTime.length - 1)],
-        checkout: checkoutTime[randomInteger(0, checkoutTime.length - 1)],
-        features: 'wifi', // ??? массив строк случайной длины из ниже предложенных: "wifi", "dishwasher", "parking", "washer", "elevator", "conditioner",
+        address: `${getRandomInteger(0, 1200) - PIN_WIDTH / 2}, ${getRandomInteger(130, 630) - PIN_HEIGHT}`,
+        price: getRandomInteger(1, 10000),
+        type: getRandomProperty(type),
+        rooms: getRandomInteger(1, 100),
+        guests: getRandomInteger(1, 100),
+        checkin: checkinTime[getRandomInteger(0, checkinTime.length - 1)],
+        checkout: checkoutTime[getRandomInteger(0, checkoutTime.length - 1)],
+        features: getRandomFeatures(getRandomInteger(0, features.length)), // массив строк случайной длины из ниже предложенных: "wifi", "dishwasher", "parking", "washer", "elevator", "conditioner",
         description: 'Описание',
-        photos: `http://o0.github.io/assets/images/tokyo/hotel1.jpg` // ??? массив строк случайной длины, содержащий адреса фотографий "http://o0.github.io/assets/images/tokyo/hotel1.jpg", "http://o0.github.io/assets/images/tokyo/hotel2.jpg", "http://o0.github.io/assets/images/tokyo/hotel3.jpg"
+        photos: getRandomPhotos(getRandomInteger(0, photos.length)) // ??? массив строк случайной длины, содержащий адреса фотографий "http://o0.github.io/assets/images/tokyo/hotel1.jpg", "http://o0.github.io/assets/images/tokyo/hotel2.jpg", "http://o0.github.io/assets/images/tokyo/hotel3.jpg"
       },
       location: {
-        x: randomInteger(0, MAP_WIDTH),
-        y: randomInteger(MAP_HEIGHT_TOP, MAP_HEIGHT_BOTTOM)
+        x: getRandomInteger(0, MAP_WIDTH),
+        y: getRandomInteger(MAP_HEIGHT_TOP, MAP_HEIGHT_BOTTOM)
       }
     });
   }
@@ -62,14 +82,14 @@ function makeAdsArray(number) {
 
 
 /* function renderAd(ad) {
-  let adElement = cardTemplate.cloneNode(true);
+  const adElement = cardTemplate.cloneNode(true);
 
   adElement.querySelector('.popup__avatar').src = ad.author.avatar;
   adElement.querySelector('.popup__title').textContent = ad.offer.title;
   adElement.querySelector('.popup__text--address').textContent = ad.offer.adress;
   adElement.querySelector('.popup__text--price').textContent = ad.offer.prise;
   adElement.querySelector('.popup__type').textContent = ad.offer.type;
-  adElement.querySelector('.popup__text--capacity').textContent = `${ad.offer.rooms} комнаты для ${ad.offer.guests}гостей`;
+  adElement.querySelector('.popup__text--capacity').textContent = `${ad.offer.rooms} комнаты для ${ad.offer.guests} гостей`;
   adElement.querySelector('.popup__text--time').textContent = `Заезд после ${ad.offer.checkin}, выезд до ${ad.offer.checkout}`;
   adElement.querySelector('.popup__feature').textContent = ad.offer.feachures; // ???
   adElement.querySelector('.popup__description').textContent = ad.offer.description;
@@ -78,12 +98,12 @@ function makeAdsArray(number) {
 } */
 
 function renderPin(pin) {
-  let pinElement = pinTemplate.cloneNode(true);
+  const pinElement = pinTemplate.cloneNode(true);
 
   pinElement.querySelector('img').src = pin.author.avatar;
   pinElement.querySelector('img').alt = pin.offer.title;
-  pinElement.style.left = `${randomInteger(0, 1200) - PIN_WIDTH / 2}px`; // координаты по Х острого конца метки
-  pinElement.style.top = `${randomInteger(130, 630) - PIN_HEIGHT}px`; // координаты по Y острого конца метки
+  pinElement.style.left = `${getRandomInteger(0, 1200) - PIN_WIDTH / 2}px`; // координаты по Х острого конца метки
+  pinElement.style.top = `${getRandomInteger(130, 630) - PIN_HEIGHT}px`; // координаты по Y острого конца метки
   return pinElement;
 }
 
