@@ -12,18 +12,20 @@ const type = {
 };
 const checkinTime = ['10:00', '13:00', '14:00'];
 const checkoutTime = ['10:00', '13:00', '14:00'];
-const features = ["wifi", "dishwasher", "parking", "washer", "elevator", "conditioner"];
-const photos = ["http://o0.github.io/assets/images/tokyo/hotel1.jpg", "http://o0.github.io/assets/images/tokyo/hotel2.jpg", "http://o0.github.io/assets/images/tokyo/hotel3.jpg"];
+const allFeatures = ["wifi", "dishwasher", "parking", "washer", "elevator", "conditioner"];
+const allPhotos = ["http://o0.github.io/assets/images/tokyo/hotel1.jpg", "http://o0.github.io/assets/images/tokyo/hotel2.jpg", "http://o0.github.io/assets/images/tokyo/hotel3.jpg"];
 const PIN_WIDTH = 50;
 const PIN_HEIGHT = 70;
 const MAP_WIDTH = 1200;
 const MAP_HEIGHT_TOP = 130;
 const MAP_HEIGHT_BOTTOM = 630;
+const someFeachure = getRandomInteger(0, allFeatures.length);
+const somePhoto = getRandomInteger(0, allPhotos.length);
+
 
 // Рандомное число в диапазоне
 function getRandomInteger(min, max) {
-  const random = min + Math.random() * (max + 1 - min);
-  return Math.floor(random);
+  return Math.floor(Math.random() * (max + 1 - min) + min);
 }
 
 // Рандомное свойство объекта
@@ -34,27 +36,27 @@ function getRandomProperty(obj) {
 
 // Рандомное число удобств
 function getRandomFeatures(quantity) {
-  const featuresRandom = [];
+  const features = [];
   for (let i = 0; i < quantity; i++) {
-    featuresRandom.push(features[getRandomInteger(0, features.length)]);
+    features.push(features[getRandomInteger(0, allFeatures.length)]);
   }
-  return featuresRandom;
+  return features;
 }
 
 // Рандомные фотографии
 function getRandomPhotos(quantity) {
-  const photosRandom = [];
+  const photos = [];
   for (let i = 0; i < quantity; i++) {
-    photosRandom.push(photos[getRandomInteger(0, photos.length)]);
+    photos.push(photos[getRandomInteger(0, allPhotos.length)]);
   }
-  return photosRandom;
+  return photos;
 }
 
 
-function makeAdsArray(number) {
-  const ads = [];
-  for (let i = 0; i < number; i++) {
-    ads.push({
+function generateOffersArray(quantity) {
+  const offers = [];
+  for (let i = 0; i < quantity; i++) {
+    offers.push({
       author: {
         avatar: `img/avatars/user0${getRandomInteger(1, 8)}.png` // не соображу, как заставить числа не повторяться
       },
@@ -67,9 +69,9 @@ function makeAdsArray(number) {
         guests: getRandomInteger(1, 100),
         checkin: checkinTime[getRandomInteger(0, checkinTime.length - 1)],
         checkout: checkoutTime[getRandomInteger(0, checkoutTime.length - 1)],
-        features: getRandomFeatures(getRandomInteger(0, features.length)), // массив строк случайной длины из ниже предложенных: "wifi", "dishwasher", "parking", "washer", "elevator", "conditioner",
+        features: getRandomFeatures(someFeachure),
         description: 'Описание',
-        photos: getRandomPhotos(getRandomInteger(0, photos.length)) // ??? массив строк случайной длины, содержащий адреса фотографий "http://o0.github.io/assets/images/tokyo/hotel1.jpg", "http://o0.github.io/assets/images/tokyo/hotel2.jpg", "http://o0.github.io/assets/images/tokyo/hotel3.jpg"
+        photos: getRandomPhotos(somePhoto)
       },
       location: {
         x: getRandomInteger(0, MAP_WIDTH),
@@ -77,29 +79,28 @@ function makeAdsArray(number) {
       }
     });
   }
-  return ads;
+  return offers;
 }
 
 
-/* function renderAd(ad) {
-  const adElement = cardTemplate.cloneNode(true);
+/* function renderOffers(offer) {
+  const offerElement = cardTemplate.cloneNode(true);
 
-  adElement.querySelector('.popup__avatar').src = ad.author.avatar;
-  adElement.querySelector('.popup__title').textContent = ad.offer.title;
-  adElement.querySelector('.popup__text--address').textContent = ad.offer.adress;
-  adElement.querySelector('.popup__text--price').textContent = ad.offer.prise;
-  adElement.querySelector('.popup__type').textContent = ad.offer.type;
-  adElement.querySelector('.popup__text--capacity').textContent = `${ad.offer.rooms} комнаты для ${ad.offer.guests} гостей`;
-  adElement.querySelector('.popup__text--time').textContent = `Заезд после ${ad.offer.checkin}, выезд до ${ad.offer.checkout}`;
-  adElement.querySelector('.popup__feature').textContent = ad.offer.feachures; // ???
-  adElement.querySelector('.popup__description').textContent = ad.offer.description;
-  adElement.querySelector('.popup__photo').src = ad.author.photos; // ???
-  return adElement; // не поняла, нужно ли выводить на карту объявления
+  offerElement.querySelector('.popup__avatar').src = ad.author.avatar;
+  offerElement.querySelector('.popup__title').textContent = ad.offer.title;
+  offerElement.querySelector('.popup__text--address').textContent = ad.offer.adress;
+  offerElement.querySelector('.popup__text--price').textContent = ad.offer.prise;
+  offerElement.querySelector('.popup__type').textContent = ad.offer.type;
+  offerElement.querySelector('.popup__text--capacity').textContent = `${ad.offer.rooms} комнаты для ${ad.offer.guests} гостей`;
+  offerElement.querySelector('.popup__text--time').textContent = `Заезд после ${ad.offer.checkin}, выезд до ${ad.offer.checkout}`;
+  offerElement.querySelector('.popup__feature').textContent = ad.offer.feachures; // ???
+  offerElement.querySelector('.popup__description').textContent = ad.offer.description;
+  offerElement.querySelector('.popup__photo').src = ad.author.photos; // ???
+  return offerElement; // не поняла, нужно ли выводить на карту объявления
 } */
 
-function renderPin(pin) {
+function generatePin(pin) {
   const pinElement = pinTemplate.cloneNode(true);
-
   pinElement.querySelector('img').src = pin.author.avatar;
   pinElement.querySelector('img').alt = pin.offer.title;
   pinElement.style.left = `${getRandomInteger(0, 1200) - PIN_WIDTH / 2}px`; // координаты по Х острого конца метки
@@ -110,12 +111,12 @@ function renderPin(pin) {
 
 function showPins() {
   map.classList.remove('map--faded');
-  const ads = makeAdsArray(8);
-  const fragmentPin = document.createDocumentFragment();
-  for (let i = 0; i < ads.length; i++) {
-    fragmentPin.appendChild(renderPin(ads[i]));
+  const offers = generateOffersArray(8);
+  const fragment = document.createDocumentFragment();
+  for (let i = 0; i < offers.length; i++) {
+    fragment.appendChild(generatePin(offers[i]));
   }
-  mapPins.appendChild(fragmentPin);
+  mapPins.appendChild(fragment);
 }
 
 showPins();
