@@ -1,9 +1,18 @@
 'use strict';
 
 const map = document.querySelector('.map');
+const form = document.querySelector('.ad-form');
+const fieldsetHeader = document.querySelector('.ad-form-header');
+const fieldsetsMain = document.querySelectorAll('.ad-form__element');
+const mapPinMain = document.querySelector('.map__pin--main');
 const mapPins = map.querySelector('.map__pins');
-const mapFilter = map.querySelector('.map__filters-container');
+// const mapFilter = map.querySelector('.map__filters-container');
+const adressInput = document.querySelector('#address');
+// const room = document.querySelector('#room_number');
+// const capacity = document.querySelector('#capacity');
 const cardTemplate = document.querySelector('#card').content.querySelector('.map__card');
+cardTemplate.querySelector('.popup__features').innerHTML = '';
+cardTemplate.querySelector('.popup__photos').innerHTML = '';
 const pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
 const type = {
   palace: 'Дворец',
@@ -17,6 +26,9 @@ const allFeatures = ["wifi", "dishwasher", "parking", "washer", "elevator", "con
 const allPhotos = ["http://o0.github.io/assets/images/tokyo/hotel1.jpg", "http://o0.github.io/assets/images/tokyo/hotel2.jpg", "http://o0.github.io/assets/images/tokyo/hotel3.jpg"];
 const PIN_WIDTH = 50;
 const PIN_HEIGHT = 70;
+const MAIN_PIN_WIDTH = 65;
+const MAIN_PIN_HEIGHT = 65;
+const MAIN_PIN_TAIL_HEIGHT = 22;
 const MAP_WIDTH = 1200;
 const MAP_HEIGHT_TOP = 130;
 const MAP_HEIGHT_BOTTOM = 630;
@@ -33,21 +45,25 @@ function getRandomProperty(obj) {
 }
 
 
-function getRandomFeatures(quantity) {
-  const features = [];
-  for (let i = 0; i < quantity; i++) {
-    features.push(allFeatures[getRandomInteger(0, allFeatures.length - 1)]);
+// Перемешивание массива по методу Фишера-Йейтса
+function shuffleArray(array) {
+  for (var i = array.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var temp = array[i];
+    array[i] = array[j];
+    array[j] = temp;
   }
-  return features;
+  return array;
 }
 
 
-function getRandomPhotos(quantity) {
-  const photos = [];
+function cutArray(array) {
+  const newArray = [];
+  const quantity = getRandomInteger(0, array.length);
   for (let i = 0; i < quantity; i++) {
-    photos.push(allPhotos[getRandomInteger(0, allPhotos.length - 1)]);
+    newArray.push(array[i]);
   }
-  return photos;
+  return newArray;
 }
 
 
@@ -67,9 +83,9 @@ function generateOffersArray(quantity) {
         guests: getRandomInteger(1, 100),
         checkin: checkinTime[getRandomInteger(0, checkinTime.length - 1)],
         checkout: checkoutTime[getRandomInteger(0, checkoutTime.length - 1)],
-        features: getRandomFeatures(getRandomInteger(0, allFeatures.length)),
+        features: cutArray(shuffleArray(allFeatures)),
         description: 'Описание',
-        photos: getRandomPhotos(getRandomInteger(0, allPhotos.length))
+        photos: cutArray(shuffleArray(allPhotos))
       },
       location: {
         x: getRandomInteger(0, MAP_WIDTH),
@@ -80,7 +96,7 @@ function generateOffersArray(quantity) {
   return offers;
 }
 
-function generateFeachures(featuresList) {
+/* function generateFeatures(featuresList) {
   const fragment = document.createDocumentFragment();
   for (let i = 0; i < featuresList.length; i++) {
     const featureItem = document.createElement('li');
@@ -104,11 +120,8 @@ function generatePhotos(photosList) {
 }
 
 
-function generateOffers(offer) {
+ function generateOffers(offer) {
   const offerElement = cardTemplate.cloneNode(true);
-  // Стирает удобства и фото из шаблона
-  offerElement.querySelector('.popup__features').innerHTML = '';
-  offerElement.querySelector('.popup__photos').innerHTML = '';
 
   offerElement.querySelector('.popup__avatar').src = offer.author.avatar;
   offerElement.querySelector('.popup__title').textContent = offer.offer.title;
@@ -117,11 +130,11 @@ function generateOffers(offer) {
   offerElement.querySelector('.popup__type').textContent = offer.offer.type;
   offerElement.querySelector('.popup__text--capacity').textContent = `${offer.offer.rooms} комнаты для ${offer.offer.guests} гостей`;
   offerElement.querySelector('.popup__text--time').textContent = `Заезд после ${offer.offer.checkin}, выезд до ${offer.offer.checkout}`;
-  offerElement.querySelector('.popup__features').appendChild(generateFeachures(offer.offer.features));
+  offerElement.querySelector('.popup__features').appendChild(generateFeatures(offer.offer.features));
   offerElement.querySelector('.popup__description').textContent = offer.offer.description;
   offerElement.querySelector('.popup__photos').appendChild(generatePhotos(offer.offer.photos));
   return offerElement;
-}
+} */
 
 function generatePin(pin) {
   const pinElement = pinTemplate.cloneNode(true);
@@ -133,9 +146,7 @@ function generatePin(pin) {
 }
 
 
-function showPins() {
-  map.classList.remove('map--faded');
-  const offers = generateOffersArray(8);
+function showPins(offers) {
   const fragment = document.createDocumentFragment();
   for (let i = 0; i < offers.length; i++) {
     fragment.appendChild(generatePin(offers[i]));
@@ -144,16 +155,69 @@ function showPins() {
 }
 
 
-function showOffers() {
-  map.classList.remove('map--faded');
-  const offers = generateOffersArray(8);
+/* function showOffers(offers) {
   const fragment = document.createDocumentFragment();
   for (let i = 0; i < offers.length; i++) {
     fragment.appendChild(generateOffers(offers[i]));
   }
   map.insertBefore(fragment, mapFilter);
+} */
+
+
+const offers = generateOffersArray(8);
+
+// showOffers(offers);
+
+
+// Элементы на неактивной странице
+fieldsetHeader.setAttribute('disabled', 'disabled');
+fieldsetsMain.forEach((fieldsetMain) => {
+  fieldsetMain.setAttribute('disabled', 'disabled');
+});
+
+
+// Адрес главного пина
+function getMainPinAdress() {
+  const mainPinAdress = {
+    x: Math.floor(parseInt(mapPinMain.style.left, 10) + MAIN_PIN_WIDTH / 2),
+    y: Math.floor(parseInt(mapPinMain.style.top, 10) + MAIN_PIN_HEIGHT / 2)
+  };
+
+  if (map.classList.contains('map--faded')) {
+    let adress = adressInput.value = `${mainPinAdress.x}, ${mainPinAdress.y}`;
+    return adress;
+  } else {
+    let adress = adressInput.value = `${mainPinAdress.x}, ${Math.floor(mainPinAdress.y + MAIN_PIN_HEIGHT / 2 + MAIN_PIN_TAIL_HEIGHT)}`;
+    return adress;
+  }
 }
 
 
-showPins();
-showOffers();
+getMainPinAdress();
+
+
+function makeActive() {
+  map.classList.remove('map--faded');
+  form.classList.remove('ad-form--disabled');
+  fieldsetHeader.removeAttribute('disabled');
+  fieldsetsMain.forEach((fieldsetMain) => {
+    fieldsetMain.removeAttribute('disabled');
+  });
+  getMainPinAdress();
+}
+
+
+mapPinMain.addEventListener('mousedown', function () {
+  makeActive();
+  showPins(offers);
+}); // как сделать, чтобы пины появлялись только по первому клику и не реагировали на последующие?
+
+
+mapPinMain.addEventListener('keydown', function (evt) {
+  if (evt.key === 'Enter') {
+    makeActive();
+    showPins(offers);
+  }
+});
+
+// валидация селекта ???
