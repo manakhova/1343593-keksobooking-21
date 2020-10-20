@@ -47,24 +47,17 @@ function getRandomProperty(obj) {
 
 // Перемешивание массива по методу Фишера-Йейтса
 function shuffleArray(array) {
-  for (var i = array.length - 1; i > 0; i--) {
-    var j = Math.floor(Math.random() * (i + 1));
-    var temp = array[i];
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const temp = array[i];
     array[i] = array[j];
     array[j] = temp;
   }
   return array;
 }
 
-
-function cutArray(array) {
-  const newArray = [];
-  const quantity = getRandomInteger(0, array.length);
-  for (let i = 0; i < quantity; i++) {
-    newArray.push(array[i]);
-  }
-  return newArray;
-}
+const shuffledFeatures = shuffleArray(allFeatures);
+const shuffledPhotos = shuffleArray(allPhotos);
 
 
 function generateOffersArray(quantity) {
@@ -83,9 +76,9 @@ function generateOffersArray(quantity) {
         guests: getRandomInteger(1, 100),
         checkin: checkinTime[getRandomInteger(0, checkinTime.length - 1)],
         checkout: checkoutTime[getRandomInteger(0, checkoutTime.length - 1)],
-        features: cutArray(shuffleArray(allFeatures)),
+        features: shuffledFeatures.slice(getRandomInteger(0, shuffledFeatures.length - 1)),
         description: 'Описание',
-        photos: cutArray(shuffleArray(allPhotos))
+        photos: shuffledPhotos.slice(getRandomInteger(0, shuffledPhotos.length - 1))
       },
       location: {
         x: getRandomInteger(0, MAP_WIDTH),
@@ -134,7 +127,8 @@ function generatePhotos(photosList) {
   offerElement.querySelector('.popup__description').textContent = offer.offer.description;
   offerElement.querySelector('.popup__photos').appendChild(generatePhotos(offer.offer.photos));
   return offerElement;
-} */
+}
+*/
 
 function generatePin(pin) {
   const pinElement = pinTemplate.cloneNode(true);
@@ -196,7 +190,7 @@ function getMainPinAdress() {
 getMainPinAdress();
 
 
-function makeActive() {
+function activatePage() {
   map.classList.remove('map--faded');
   form.classList.remove('ad-form--disabled');
   fieldsetHeader.removeAttribute('disabled');
@@ -204,18 +198,20 @@ function makeActive() {
     fieldsetMain.removeAttribute('disabled');
   });
   getMainPinAdress();
+  showPins(offers);
 }
 
 
-mapPinMain.addEventListener('mousedown', function () {
-  makeActive();
-  showPins(offers);
+const mainPinMouseDown = mapPinMain.addEventListener('mousedown', function () {
+  activatePage();
+
+  mapPinMain.removeEventListener('mousedown', mainPinMouseDown);
 }); // как сделать, чтобы пины появлялись только по первому клику и не реагировали на последующие?
 
 
 mapPinMain.addEventListener('keydown', function (evt) {
   if (evt.key === 'Enter') {
-    makeActive();
+    activatePage();
     showPins(offers);
   }
 });
