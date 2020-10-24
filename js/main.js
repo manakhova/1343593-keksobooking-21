@@ -6,10 +6,8 @@ const fieldsetHeader = document.querySelector('.ad-form-header');
 const fieldsetsMain = document.querySelectorAll('.ad-form__element');
 const mapPinMain = document.querySelector('.map__pin--main');
 const mapPins = map.querySelector('.map__pins');
-// const mapFilter = map.querySelector('.map__filters-container');
-const adressInput = document.querySelector('#address');
-// const room = document.querySelector('#room_number');
-// const capacity = document.querySelector('#capacity');
+const mapFilter = map.querySelector('.map__filters-container');
+const addressInput = document.querySelector('#address');
 const cardTemplate = document.querySelector('#card').content.querySelector('.map__card');
 cardTemplate.querySelector('.popup__features').innerHTML = '';
 cardTemplate.querySelector('.popup__photos').innerHTML = '';
@@ -49,20 +47,18 @@ function getRandomProperty(obj) {
 function shuffleArray(array) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    const temp = array[i];
-    array[i] = array[j];
-    array[j] = temp;
+    [array[i], array[j]] = [array[j], array[i]];
   }
   return array;
 }
-
-const shuffledFeatures = shuffleArray(allFeatures);
-const shuffledPhotos = shuffleArray(allPhotos);
 
 
 function generateOffersArray(quantity) {
   const offers = [];
   for (let i = 0; i < quantity; i++) {
+    const shuffledFeatures = shuffleArray(allFeatures);
+    const shuffledPhotos = shuffleArray(allPhotos);
+
     offers.push({
       author: {
         avatar: `img/avatars/user0${getRandomInteger(1, 8)}.png`
@@ -89,7 +85,7 @@ function generateOffersArray(quantity) {
   return offers;
 }
 
-/* function generateFeatures(featuresList) {
+function generateFeatures(featuresList) {
   const fragment = document.createDocumentFragment();
   for (let i = 0; i < featuresList.length; i++) {
     const featureItem = document.createElement('li');
@@ -113,7 +109,7 @@ function generatePhotos(photosList) {
 }
 
 
- function generateOffers(offer) {
+function generateOffers(offer) {
   const offerElement = cardTemplate.cloneNode(true);
 
   offerElement.querySelector('.popup__avatar').src = offer.author.avatar;
@@ -128,7 +124,7 @@ function generatePhotos(photosList) {
   offerElement.querySelector('.popup__photos').appendChild(generatePhotos(offer.offer.photos));
   return offerElement;
 }
-*/
+
 
 function generatePin(pin) {
   const pinElement = pinTemplate.cloneNode(true);
@@ -149,45 +145,69 @@ function showPins(offers) {
 }
 
 
-/* function showOffers(offers) {
+function addOffers(offers) {
   const fragment = document.createDocumentFragment();
   for (let i = 0; i < offers.length; i++) {
-    fragment.appendChild(generateOffers(offers[i]));
+    fragment.appendChild(generateOffers(offers[i])).classList.add('hidden');
   }
   map.insertBefore(fragment, mapFilter);
-} */
-
-
-const offers = generateOffersArray(8);
-
-// showOffers(offers);
-
-
-// Элементы на неактивной странице
-fieldsetHeader.setAttribute('disabled', 'disabled');
-fieldsetsMain.forEach((fieldsetMain) => {
-  fieldsetMain.setAttribute('disabled', 'disabled');
-});
+}
 
 
 // Адрес главного пина
-function getMainPinAdress() {
-  const mainPinAdress = {
+function getMainPinAddress() {
+  const mainPinAddress = {
     x: Math.floor(parseInt(mapPinMain.style.left, 10) + MAIN_PIN_WIDTH / 2),
     y: Math.floor(parseInt(mapPinMain.style.top, 10) + MAIN_PIN_HEIGHT / 2)
   };
+  return mainPinAddress;
+}
 
-  if (map.classList.contains('map--faded')) {
-    let adress = adressInput.value = `${mainPinAdress.x}, ${mainPinAdress.y}`;
-    return adress;
+// валидация селекта
+const capacity = document.querySelector('#capacity');
+const roomNumber = document.querySelector('#room_number');
+const capacityOptions = capacity.children;
+// const roomNumberOptions = roomNumber.children;
+
+
+function disableСapacityOptions() {
+  if (roomNumber.value === 1) {
+    Array.from(capacityOptions).forEach((capacityOption) => {
+      capacityOption.setAttribute('disabled', 'disabled');
+    });
+  } else if (roomNumber.value === 2) {
+    Array.from(capacityOptions).forEach((capacityOption) => {
+      capacityOption.setAttribute('disabled', 'disabled');
+    });
+  } else if (roomNumber.value === 3) {
+    Array.from(capacityOptions).forEach((capacityOption) => {
+      capacityOption.setAttribute('disabled', 'disabled');
+    });
   } else {
-    let adress = adressInput.value = `${mainPinAdress.x}, ${Math.floor(mainPinAdress.y + MAIN_PIN_HEIGHT / 2 + MAIN_PIN_TAIL_HEIGHT)}`;
-    return adress;
+    Array.from(capacityOptions).forEach((capacityOption) => {
+      capacityOption.setAttribute('disabled', 'disabled');
+    });
   }
 }
 
 
-getMainPinAdress();
+function mainPinMouseDown() {
+  activatePage();
+} // это нормальное название для функции?
+
+function mainPinKeyDown(evt) {
+  if (evt.key === 'Enter') {
+    activatePage();
+  }
+}
+
+function showPopup() {
+  const popupItems = document.querySelectorAll('.popup');
+
+  Array.from(popupItems).forEach((popupItem) => {
+    popupItem.classList.remove('hidden');
+  });
+}
 
 
 function activatePage() {
@@ -197,23 +217,34 @@ function activatePage() {
   fieldsetsMain.forEach((fieldsetMain) => {
     fieldsetMain.removeAttribute('disabled');
   });
-  getMainPinAdress();
+
+  const mainPinAddress = getMainPinAddress();
+  addressInput.value = `${mainPinAddress.x}, ${Math.floor(mainPinAddress.y + MAIN_PIN_HEIGHT / 2 + MAIN_PIN_TAIL_HEIGHT)}`;
+
+  const offers = generateOffersArray(8);
   showPins(offers);
+  addOffers(offers);
+
+  mapPinMain.removeEventListener('mousedown', mainPinMouseDown);
+  mapPinMain.removeEventListener('keydown', mainPinKeyDown);
+  form.addEventListener('change', disableСapacityOptions);
+  map.addEventListener('click', showPopup);
 }
 
 
-const mainPinMouseDown = mapPinMain.addEventListener('mousedown', function () {
-  activatePage();
+function deactivatePage() {
+  map.classList.add('map--faded');
+  form.classList.add('ad-form--disabled');
+  fieldsetHeader.setAttribute('disabled', 'disabled');
+  fieldsetsMain.forEach((fieldsetMain) => {
+    fieldsetMain.setAttribute('disabled', 'disabled');
+  });
 
-  mapPinMain.removeEventListener('mousedown', mainPinMouseDown);
-}); // как сделать, чтобы пины появлялись только по первому клику и не реагировали на последующие?
+  const mainPinAddress = getMainPinAddress();
+  addressInput.value = `${mainPinAddress.x}, ${mainPinAddress.y}`;
 
+  mapPinMain.addEventListener('mousedown', mainPinMouseDown);
+  mapPinMain.addEventListener('keydown', mainPinKeyDown);
+}
 
-mapPinMain.addEventListener('keydown', function (evt) {
-  if (evt.key === 'Enter') {
-    activatePage();
-    showPins(offers);
-  }
-});
-
-// валидация селекта ???
+deactivatePage();
