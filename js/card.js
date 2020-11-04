@@ -46,6 +46,6 @@
   }
 
   window.card = {
-    createCardElement: createCardElement
+    createCardElement
   };
 })();

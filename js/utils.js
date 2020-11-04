@@ -5,14 +5,11 @@
     return Math.floor(Math.random() * (max + 1 - min) + min);
   }
 
-
   function getRandomProperty(obj) {
     const keys = Object.keys(obj);
     return obj[keys[getRandomInteger(0, keys.length)]];
   }
 
-
-  // Перемешивание массива по методу Фишера-Йейтса
   function shuffleArray(array) {
     const items = array.slice();
     for (let i = items.length - 1; i > 0; i--) {
@@ -23,8 +20,8 @@
   }
 
   window.utils = {
-    getRandomInteger: getRandomInteger,
-    getRandomProperty: getRandomProperty,
-    shuffleArray: shuffleArray
+    getRandomInteger,
+    getRandomProperty,
+    shuffleArray
   };
 })();

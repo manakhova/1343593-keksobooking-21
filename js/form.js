@@ -1,13 +1,16 @@
 'use strict';
 
-var roomNumber = document.querySelector(`#room_number`);
-var titleInput = document.querySelector(`#title`);
-var priceInput = document.querySelector(`#price`);
-var typeSelect = document.querySelector(`#type`);
-var timeIn = document.querySelector(`#timein`);
-var timeOut = document.querySelector(`#timeout`);
-
 (function () {
+  const form = document.querySelector(`.ad-form`);
+  const fieldsetHeader = document.querySelector(`.ad-form-header`);
+  const fieldsetsMain = document.querySelectorAll(`.ad-form__element`);
+  const roomNumber = document.querySelector(`#room_number`);
+  const addressInput = document.querySelector(`#address`);
+  const titleInput = document.querySelector(`#title`);
+  const priceInput = document.querySelector(`#price`);
+  const typeSelect = document.querySelector(`#type`);
+  const timeIn = document.querySelector(`#timein`);
+  const timeOut = document.querySelector(`#timeout`);
   const capacity = document.querySelector(`#capacity`);
   const capacityOptions = capacity.children;
   const MIN_TITLE_LENGTH = 30;
@@ -105,11 +108,46 @@ var timeOut = document.querySelector(`#timeout`);
     timeOut.value = evt.target.value;
   }
 
+  function activateForm(mainPinAddress) {
+    form.classList.remove(`ad-form--disabled`);
+    fieldsetHeader.removeAttribute(`disabled`);
+    fieldsetsMain.forEach((fieldsetMain) => {
+      fieldsetMain.removeAttribute(`disabled`);
+    });
+
+    validateCapacity();
+    validateType();
+
+    addressInput.value = `${mainPinAddress.x}, ${mainPinAddress.y}`;
+
+    roomNumber.addEventListener(`change`, validateCapacity);
+    titleInput.addEventListener(`input`, validateTitleInput);
+    priceInput.addEventListener(`input`, validatePriceInput);
+    typeSelect.addEventListener(`change`, validateType);
+    timeIn.addEventListener(`change`, synchronizeTime);
+    timeOut.addEventListener(`change`, synchronizeTime);
+  }
+
+  function deactivateForm(mainPinAddress) {
+    form.classList.add(`ad-form--disabled`);
+    fieldsetHeader.setAttribute(`disabled`, `disabled`);
+    fieldsetsMain.forEach((fieldsetMain) => {
+      fieldsetMain.setAttribute(`disabled`, `disabled`);
+    });
+
+    addressInput.value = `${mainPinAddress.x}, ${mainPinAddress.y}`;
+
+    roomNumber.removeEventListener(`change`, validateCapacity);
+    titleInput.removeEventListener(`input`, validateTitleInput);
+    priceInput.removeEventListener(`input`, validatePriceInput);
+    typeSelect.removeEventListener(`change`, validateType);
+    timeIn.removeEventListener(`change`, synchronizeTime);
+    timeOut.removeEventListener(`change`, synchronizeTime);
+  }
+
+
   window.form = {
-    validateCapacity: validateCapacity,
-    validateType: validateType,
-    validateTitleInput: validateTitleInput,
-    validatePriceInput: validatePriceInput,
-    synchronizeTime: synchronizeTime
+    activateForm,
+    deactivateForm
   };
 })();

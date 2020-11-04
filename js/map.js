@@ -1,19 +1,28 @@
 'use strict';
 
-var map = document.querySelector(`.map`);
-
 (function () {
+  const {createCardElement} = window.card;
+  const map = document.querySelector(`.map`);
   const mapPins = map.querySelector(`.map__pins`);
   const mapFilter = map.querySelector(`.map__filters-container`);
+  const mapPinMain = document.querySelector(`.map__pin--main`);
+  const MAIN_PIN_HEIGHT = 65;
+  const MAIN_PIN_TAIL_HEIGHT = 22;
+  const MAIN_PIN_WIDTH = 65;
 
-  function generatePins(offers) {
-    const fragment = document.createDocumentFragment();
-    for (let i = 0; i < offers.length; i++) {
-      fragment.appendChild(window.pin.createPinElement(offers[i]));
-    }
-    mapPins.appendChild(fragment);
+  function getMainPinAddress() {
+    return {
+      x: Math.floor(parseInt(mapPinMain.style.left, 10) + MAIN_PIN_WIDTH / 2),
+      y: Math.floor(parseInt(mapPinMain.style.top, 10) + MAIN_PIN_HEIGHT / 2)
+    };
   }
 
+  function getMainPinAddressWithTail() {
+    return {
+      x: Math.floor(parseInt(mapPinMain.style.left, 10) + MAIN_PIN_WIDTH / 2),
+      y: Math.floor(parseInt(mapPinMain.style.top, 10) + MAIN_PIN_HEIGHT + MAIN_PIN_TAIL_HEIGHT)
+    };
+  }
 
   function removeCards() {
     const currentCards = document.querySelectorAll(`article.map__card`);
@@ -43,7 +52,7 @@ var map = document.querySelector(`.map`);
         if (offerId) {
           removeCards();
 
-          const card = window.card.createCardElement(offers[offerId]);
+          const card = createCardElement(offers[offerId]);
           map.insertBefore(card, mapFilter);
 
           const cardButtonClose = card.querySelector(`button.popup__close`);
@@ -54,8 +63,24 @@ var map = document.querySelector(`.map`);
     };
   }
 
+  function activateMap(pins, offers) {
+    map.classList.remove(`map--faded`);
+    mapPins.appendChild(pins);
+
+    map.addEventListener(`click`, mapClickFabric(offers));
+  }
+
+  function deactivateMap() {
+    map.classList.add(`map--faded`);
+  }
+
   window.map = {
-    generatePins: generatePins,
-    mapClickFabric: mapClickFabric
+    map,
+    mapPinMain,
+    mapClickFabric,
+    getMainPinAddress,
+    getMainPinAddressWithTail,
+    activateMap,
+    deactivateMap
   };
 })();
