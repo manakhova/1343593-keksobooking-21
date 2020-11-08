@@ -1,7 +1,7 @@
 'use strict';
 
 (function () {
-  const {PIN_WIDTH, PIN_HEIGHT} = window.offer;
+  const {PIN_WIDTH, PIN_HEIGHT, MAP_HEIGHT_TOP, MAP_HEIGHT_BOTTOM, MAP_WIDTH} = window.offer;
   const {getRandomInteger} = window.utils;
   const pinTemplate = document.querySelector(`#pin`).content.querySelector(`.map__pin`);
 
@@ -11,8 +11,8 @@
     const pinImage = pinElement.querySelector(`img`);
     pinImage.src = pin.author.avatar;
     pinImage.alt = pin.offer.title;
-    pinElement.style.left = `${getRandomInteger(0, 1200) - PIN_WIDTH / 2}px`;
-    pinElement.style.top = `${getRandomInteger(130, 630) - PIN_HEIGHT}px`;
+    pinElement.style.left = `${getRandomInteger(0, MAP_WIDTH) - PIN_WIDTH / 2}px`;
+    pinElement.style.top = `${getRandomInteger(MAP_HEIGHT_TOP, MAP_HEIGHT_BOTTOM) - PIN_HEIGHT}px`;
     return pinElement;
   }
 

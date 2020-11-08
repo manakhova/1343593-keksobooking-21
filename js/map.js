@@ -81,6 +81,10 @@
     getMainPinAddress,
     getMainPinAddressWithTail,
     activateMap,
-    deactivateMap
+    deactivateMap,
+    MAIN_PIN_HEIGHT,
+    MAIN_PIN_TAIL_HEIGHT,
+    MAIN_PIN_HEIGHT,
+    MAIN_PIN_WIDTH
   };
 })();

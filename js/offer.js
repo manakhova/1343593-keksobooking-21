@@ -54,6 +54,9 @@
   window.offer = {
     PIN_WIDTH,
     PIN_HEIGHT,
+    MAP_HEIGHT_TOP,
+    MAP_HEIGHT_BOTTOM,
+    MAP_WIDTH,
     generateOffersArray
   };
 })();
