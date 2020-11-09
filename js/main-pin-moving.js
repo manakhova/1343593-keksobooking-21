@@ -3,6 +3,7 @@
 (function () {
   const {map, mapPinMain, MAIN_PIN_HEIGHT, MAIN_PIN_TAIL_HEIGHT, MAIN_PIN_WIDTH} = window.map;
   const {MAP_HEIGHT_BOTTOM, MAP_HEIGHT_TOP, MAP_WIDTH} = window.offer;
+  const {addressInput} = window.form;
   const MAIN_PIN_TOP_LIMIT = MAP_HEIGHT_TOP - MAIN_PIN_HEIGHT - MAIN_PIN_TAIL_HEIGHT;
   const MAIN_PIN_BOTTOM_LIMIT = MAP_HEIGHT_BOTTOM - MAIN_PIN_HEIGHT - MAIN_PIN_TAIL_HEIGHT;
   const MAIN_PIN_LEFT_LIMIT = -MAIN_PIN_WIDTH / 2;
@@ -49,6 +50,13 @@
       } else {
         mapPinMain.style.left = `${mainPinCoords.x}px`;
       }
+
+      const pinTailCoords = {
+        x: Math.floor(mainPinCoords.x + MAIN_PIN_WIDTH / 2),
+        y: Math.floor(mainPinCoords.y + MAIN_PIN_HEIGHT + MAIN_PIN_TAIL_HEIGHT)
+      }
+
+      addressInput.value = `${pinTailCoords.x}, ${pinTailCoords.y}`;
     }
 
     function onMouseUp(upEvt) {

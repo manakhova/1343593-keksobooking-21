@@ -148,6 +148,7 @@
 
   window.form = {
     activateForm,
-    deactivateForm
+    deactivateForm,
+    addressInput
   };
 })();
