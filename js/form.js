@@ -118,7 +118,7 @@
     validateCapacity();
     validateType();
 
-    addressInput.value = `${mainPinAddress.x}, ${mainPinAddress.y}`;
+    setAddressValue(`${mainPinAddress.x}, ${mainPinAddress.y}`);
 
     roomNumber.addEventListener(`change`, validateCapacity);
     titleInput.addEventListener(`input`, validateTitleInput);
@@ -135,7 +135,7 @@
       fieldsetMain.setAttribute(`disabled`, `disabled`);
     });
 
-    addressInput.value = `${mainPinAddress.x}, ${mainPinAddress.y}`;
+    setAddressValue(`${mainPinAddress.x}, ${mainPinAddress.y}`);
 
     roomNumber.removeEventListener(`change`, validateCapacity);
     titleInput.removeEventListener(`input`, validateTitleInput);
@@ -145,10 +145,13 @@
     timeOut.removeEventListener(`change`, synchronizeTime);
   }
 
+  function setAddressValue(value) {
+    addressInput.value = value;
+  }
 
   window.form = {
     activateForm,
     deactivateForm,
-    addressInput
+    setAddressValue
   };
 })();
