@@ -5,7 +5,7 @@
   const {activateForm, deactivateForm} = window.form;
   const {generatePins} = window.pin;
   const {loadData} = window.ajax;
-  const SERVER_URL = `https://231.javascript.pages.academy/keksobooking/data`;
+  const SERVER_URL = `https://21.javascript.pages.academy/keksobooking/data`;
 
   function initializeErrorMessage() {
     const errorTemplate = document.querySelector(`#error`).content.querySelector(`.error`);
