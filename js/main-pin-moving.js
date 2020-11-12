@@ -1,8 +1,7 @@
 'use strict';
 
 (function () {
-  const {map, mapPinMain, getMainPinAddressWithTail, MAIN_PIN_HEIGHT, MAIN_PIN_TAIL_HEIGHT, MAIN_PIN_WIDTH} = window.map;
-  const {MAP_HEIGHT_BOTTOM, MAP_HEIGHT_TOP, MAP_WIDTH} = window.offer;
+  const {map, mapPinMain, getMainPinAddressWithTail, MAIN_PIN_HEIGHT, MAIN_PIN_TAIL_HEIGHT, MAIN_PIN_WIDTH, MAP_WIDTH, MAP_HEIGHT_TOP, MAP_HEIGHT_BOTTOM} = window.map;
   const {setAddressValue} = window.form;
   const MAIN_PIN_TOP_LIMIT = MAP_HEIGHT_TOP - MAIN_PIN_HEIGHT - MAIN_PIN_TAIL_HEIGHT;
   const MAIN_PIN_BOTTOM_LIMIT = MAP_HEIGHT_BOTTOM - MAIN_PIN_HEIGHT - MAIN_PIN_TAIL_HEIGHT;
