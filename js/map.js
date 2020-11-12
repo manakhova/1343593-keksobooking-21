@@ -9,6 +9,9 @@
   const MAIN_PIN_HEIGHT = 65;
   const MAIN_PIN_TAIL_HEIGHT = 22;
   const MAIN_PIN_WIDTH = 65;
+  const MAP_WIDTH = 1200;
+  const MAP_HEIGHT_TOP = 130;
+  const MAP_HEIGHT_BOTTOM = 630;
 
   function getMainPinAddress() {
     return {
@@ -83,6 +86,9 @@
     deactivateMap,
     MAIN_PIN_HEIGHT,
     MAIN_PIN_TAIL_HEIGHT,
-    MAIN_PIN_WIDTH
+    MAIN_PIN_WIDTH,
+    MAP_WIDTH,
+    MAP_HEIGHT_TOP,
+    MAP_HEIGHT_BOTTOM
   };
 })();

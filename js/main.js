@@ -3,8 +3,17 @@
 (function () {
   const {mapPinMain, activateMap, deactivateMap, getMainPinAddress, getMainPinAddressWithTail} = window.map;
   const {activateForm, deactivateForm} = window.form;
-  const {generateOffersArray} = window.offer;
   const {generatePins} = window.pin;
+  const {loadData} = window.ajax;
+  const SERVER_URL = `https://21.javascript.pages.academy/keksobooking/data`;
+
+  function initializeErrorMessage() {
+    const errorTemplate = document.querySelector(`#error`).content.querySelector(`.error`);
+    const errorElement = errorTemplate.cloneNode(true);
+    errorElement.id = `error-message`;
+    errorElement.classList.add(`hidden`);
+    document.body.appendChild(errorElement);
+  }
 
   function mainPinMouseDown() {
     activatePage();
@@ -16,17 +25,54 @@
     }
   }
 
+  function prepareOffers(item, index) {
+    item.id = index;
+    return item;
+  }
+
+  function showErrorMessage(error) {
+    const errorElement = document.querySelector(`#error-message`);
+    const errorMessageButtonClose = errorElement.querySelector(`.error__button`);
+    errorElement.querySelector(`.error__message`).textContent = error;
+    errorElement.classList.remove(`hidden`);
+
+    errorMessageButtonClose.addEventListener(`mousedown`, closeMessageClick);
+    errorMessageButtonClose.addEventListener(`keydown`, closeMessageEscKeydown);
+  }
+
+  function closeMessageClick() {
+    hideErrorMessage();
+  }
+
+  function closeMessageEscKeydown(evt) {
+    if (evt.key === `Escape`) {
+      hideErrorMessage();
+    }
+  }
+
+  function hideErrorMessage() {
+    const errorElement = document.querySelector(`#error-message`);
+    const errorMessageButtonClose = errorElement.querySelector(`.error__button`);
+    errorElement.classList.add(`hidden`);
+
+    errorMessageButtonClose.removeEventListener(`mousedown`, closeMessageClick);
+    errorMessageButtonClose.removeEventListener(`keydown`, closeMessageEscKeydown);
+  }
+
   function activatePage() {
-    const mainPinAddress = getMainPinAddressWithTail();
+    loadData(SERVER_URL, (data) => {
+      const mainPinAddress = getMainPinAddressWithTail();
 
-    const offers = generateOffersArray(8);
-    const pins = generatePins(offers);
+      const offers = data.map(prepareOffers);
+      const pins = generatePins(offers);
 
-    mapPinMain.removeEventListener(`mousedown`, mainPinMouseDown);
-    mapPinMain.removeEventListener(`keydown`, mainPinKeyDown);
+      mapPinMain.removeEventListener(`mousedown`, mainPinMouseDown);
+      mapPinMain.removeEventListener(`keydown`, mainPinKeyDown);
 
-    activateMap(pins, offers);
-    activateForm(mainPinAddress);
+      activateMap(pins, offers);
+      activateForm(mainPinAddress);
+    },
+    showErrorMessage);
   }
 
   function deactivatePage() {
@@ -40,4 +86,5 @@
   }
 
   deactivatePage();
+  initializeErrorMessage();
 })();
