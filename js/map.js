@@ -2,6 +2,7 @@
 
 (function () {
   const {createCardElement} = window.card;
+  const {removePins} = window.pin;
   const map = document.querySelector(`.map`);
   const mapPins = map.querySelector(`.map__pins`);
   const mapFilter = map.querySelector(`.map__filters-container`);
@@ -74,6 +75,7 @@
   }
 
   function deactivateMap() {
+    removePins();
     map.classList.add(`map--faded`);
   }
 

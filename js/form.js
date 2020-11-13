@@ -2,6 +2,7 @@
 
 (function () {
   const form = document.querySelector(`.ad-form`);
+  const formCleaner = form.querySelector(`.ad-form__reset`);
   const fieldsetHeader = document.querySelector(`.ad-form-header`);
   const fieldsetsMain = document.querySelectorAll(`.ad-form__element`);
   const roomNumber = document.querySelector(`#room_number`);
@@ -108,6 +109,10 @@
     timeOut.value = evt.target.value;
   }
 
+  function setAddressValue(value) {
+    addressInput.value = value;
+  }
+
   function activateForm(mainPinAddress) {
     form.classList.remove(`ad-form--disabled`);
     fieldsetHeader.removeAttribute(`disabled`);
@@ -126,9 +131,11 @@
     typeSelect.addEventListener(`change`, validateType);
     timeIn.addEventListener(`change`, synchronizeTime);
     timeOut.addEventListener(`change`, synchronizeTime);
+    formCleaner.addEventListener(`click`, cleanForm);
   }
 
   function deactivateForm(mainPinAddress) {
+    form.reset();
     form.classList.add(`ad-form--disabled`);
     fieldsetHeader.setAttribute(`disabled`, `disabled`);
     fieldsetsMain.forEach((fieldsetMain) => {
@@ -143,13 +150,15 @@
     typeSelect.removeEventListener(`change`, validateType);
     timeIn.removeEventListener(`change`, synchronizeTime);
     timeOut.removeEventListener(`change`, synchronizeTime);
+    formCleaner.removeEventListener(`click`, cleanForm);
   }
 
-  function setAddressValue(value) {
-    addressInput.value = value;
+  function cleanForm() {
+    form.reset();
   }
 
   window.form = {
+    form,
     activateForm,
     deactivateForm,
     setAddressValue

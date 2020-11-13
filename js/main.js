@@ -2,17 +2,30 @@
 
 (function () {
   const {mapPinMain, activateMap, deactivateMap, getMainPinAddress, getMainPinAddressWithTail} = window.map;
-  const {activateForm, deactivateForm} = window.form;
+  const {activateForm, deactivateForm, form} = window.form;
   const {generatePins} = window.pin;
-  const {loadData} = window.ajax;
+  const {loadData, uploadData} = window.ajax;
+  const main = document.querySelector(`main`);
   const SERVER_URL = `https://21.javascript.pages.academy/keksobooking/data`;
+  const SERVER_UPLOAD_URL = `https://21.javascript.pages.academy/keksobooking`;
+
+  function initializeSuccessMessage() {
+    const successTemplate = document.querySelector(`#success`).content.querySelector(`.success`);
+    const successElement = successTemplate.cloneNode(true);
+    successElement.classList.add(`hidden`);
+    main.appendChild(successElement);
+  }
 
   function initializeErrorMessage() {
     const errorTemplate = document.querySelector(`#error`).content.querySelector(`.error`);
     const errorElement = errorTemplate.cloneNode(true);
+    const errorMessageButtonClose = errorElement.querySelector(`.error__button`);
     errorElement.id = `error-message`;
     errorElement.classList.add(`hidden`);
-    document.body.appendChild(errorElement);
+    main.appendChild(errorElement);
+
+    errorMessageButtonClose.addEventListener(`mousedown`, closeMessageClick);
+    errorMessageButtonClose.addEventListener(`keydown`, closeMessageEscKeydown);
   }
 
   function mainPinMouseDown() {
@@ -32,12 +45,13 @@
 
   function showErrorMessage(error) {
     const errorElement = document.querySelector(`#error-message`);
-    const errorMessageButtonClose = errorElement.querySelector(`.error__button`);
     errorElement.querySelector(`.error__message`).textContent = error;
     errorElement.classList.remove(`hidden`);
+  }
 
-    errorMessageButtonClose.addEventListener(`mousedown`, closeMessageClick);
-    errorMessageButtonClose.addEventListener(`keydown`, closeMessageEscKeydown);
+  function showSuccessMessage() {
+    const successElement = document.querySelector(`.success`);
+    successElement.classList.remove(`hidden`);
   }
 
   function closeMessageClick() {
@@ -50,13 +64,24 @@
     }
   }
 
+  function closeSuccessMessageClick() {
+    hideSuccessMessage();
+  }
+
+  function closeSuccessMessageEscKeydown(evt) {
+    if (evt.key === `Escape`) {
+      hideSuccessMessage();
+    }
+  }
+
   function hideErrorMessage() {
     const errorElement = document.querySelector(`#error-message`);
-    const errorMessageButtonClose = errorElement.querySelector(`.error__button`);
     errorElement.classList.add(`hidden`);
+  }
 
-    errorMessageButtonClose.removeEventListener(`mousedown`, closeMessageClick);
-    errorMessageButtonClose.removeEventListener(`keydown`, closeMessageEscKeydown);
+  function hideSuccessMessage() {
+    const successElement = document.querySelector(`.success`);
+    successElement.classList.add(`hidden`);
   }
 
   function activatePage() {
@@ -71,6 +96,8 @@
 
       activateMap(pins, offers);
       activateForm(mainPinAddress);
+
+      form.addEventListener(`submit`, submitForm);
     },
     showErrorMessage);
   }
@@ -83,8 +110,25 @@
 
     deactivateMap();
     deactivateForm(mainPinAddress);
+
+    form.removeEventListener(`submit`, submitForm);
+  }
+
+  function resetPage() {
+    deactivatePage();
+    showSuccessMessage();
+
+    document.addEventListener(`mousedown`, closeSuccessMessageClick);
+    document.addEventListener(`keydown`, closeSuccessMessageEscKeydown);
+  }
+
+  function submitForm(evt) {
+    evt.preventDefault();
+
+    uploadData(SERVER_UPLOAD_URL, new FormData(form), resetPage, showErrorMessage);
   }
 
   deactivatePage();
   initializeErrorMessage();
+  initializeSuccessMessage();
 })();
