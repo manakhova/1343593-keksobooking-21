@@ -6,6 +6,7 @@
   const {generatePins} = window.pin;
   const {loadData, uploadData} = window.ajax;
   const main = document.querySelector(`main`);
+  const pageResetButton = document.querySelector(`.ad-form__reset`);
   const SERVER_URL = `https://21.javascript.pages.academy/keksobooking/data`;
   const SERVER_UPLOAD_URL = `https://21.javascript.pages.academy/keksobooking`;
 
@@ -98,6 +99,7 @@
       activateForm(mainPinAddress);
 
       form.addEventListener(`submit`, submitForm);
+      pageResetButton.addEventListener(`click`, onPageResetButtonClick);
     },
     showErrorMessage);
   }
@@ -112,6 +114,7 @@
     deactivateForm(mainPinAddress);
 
     form.removeEventListener(`submit`, submitForm);
+    pageResetButton.removeEventListener(`click`, onPageResetButtonClick);
   }
 
   function resetPage() {
@@ -120,6 +123,10 @@
 
     document.addEventListener(`mousedown`, closeSuccessMessageClick);
     document.addEventListener(`keydown`, closeSuccessMessageEscKeydown);
+  }
+
+  function onPageResetButtonClick() {
+    deactivatePage();
   }
 
   function submitForm(evt) {

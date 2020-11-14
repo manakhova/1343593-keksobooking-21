@@ -2,7 +2,6 @@
 
 (function () {
   const form = document.querySelector(`.ad-form`);
-  const formCleaner = form.querySelector(`.ad-form__reset`);
   const fieldsetHeader = document.querySelector(`.ad-form-header`);
   const fieldsetsMain = document.querySelectorAll(`.ad-form__element`);
   const roomNumber = document.querySelector(`#room_number`);
@@ -131,7 +130,6 @@
     typeSelect.addEventListener(`change`, validateType);
     timeIn.addEventListener(`change`, synchronizeTime);
     timeOut.addEventListener(`change`, synchronizeTime);
-    formCleaner.addEventListener(`click`, cleanForm);
   }
 
   function deactivateForm(mainPinAddress) {
@@ -150,11 +148,6 @@
     typeSelect.removeEventListener(`change`, validateType);
     timeIn.removeEventListener(`change`, synchronizeTime);
     timeOut.removeEventListener(`change`, synchronizeTime);
-    formCleaner.removeEventListener(`click`, cleanForm);
-  }
-
-  function cleanForm() {
-    form.reset();
   }
 
   window.form = {

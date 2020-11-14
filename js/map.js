@@ -76,6 +76,7 @@
 
   function deactivateMap() {
     removePins();
+    removeCards();
     map.classList.add(`map--faded`);
   }
 
