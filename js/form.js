@@ -108,6 +108,10 @@
     timeOut.value = evt.target.value;
   }
 
+  function setAddressValue(value) {
+    addressInput.value = value;
+  }
+
   function activateForm(mainPinAddress) {
     form.classList.remove(`ad-form--disabled`);
     fieldsetHeader.removeAttribute(`disabled`);
@@ -129,6 +133,7 @@
   }
 
   function deactivateForm(mainPinAddress) {
+    form.reset();
     form.classList.add(`ad-form--disabled`);
     fieldsetHeader.setAttribute(`disabled`, `disabled`);
     fieldsetsMain.forEach((fieldsetMain) => {
@@ -145,11 +150,8 @@
     timeOut.removeEventListener(`change`, synchronizeTime);
   }
 
-  function setAddressValue(value) {
-    addressInput.value = value;
-  }
-
   window.form = {
+    form,
     activateForm,
     deactivateForm,
     setAddressValue

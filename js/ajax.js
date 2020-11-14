@@ -5,9 +5,9 @@
     OK: 200
   };
   const TIMEOUT_IN_MS = 10000;
-  const xhr = new XMLHttpRequest();
 
-  function loadData(url, onSuccess, onError) {
+  function createXHR(method, url, onSuccess, onError) {
+    const xhr = new XMLHttpRequest();
     xhr.responseType = `json`;
 
     function showStatus() {
@@ -32,11 +32,20 @@
 
     xhr.timeout = TIMEOUT_IN_MS;
 
-    xhr.open(`GET`, url);
-    xhr.send();
+    xhr.open(method, url);
+    return xhr;
+  }
+
+  function loadData(url, onSuccess, onError) {
+    createXHR(`GET`, url, onSuccess, onError).send();
+  }
+
+  function uploadData(url, data, onSuccess, onError) {
+    createXHR(`POST`, url, onSuccess, onError).send(data);
   }
 
   window.ajax = {
-    loadData
+    loadData,
+    uploadData
   };
 })();

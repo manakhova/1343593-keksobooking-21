@@ -1,8 +1,6 @@
 'use strict';
 
 (function () {
-  // const PIN_WIDTH = 50;
-  // const PIN_HEIGHT = 70;
   const pinTemplate = document.querySelector(`#pin`).content.querySelector(`.map__pin`);
 
   function createPinElement(pin) {
@@ -11,7 +9,7 @@
     const pinImage = pinElement.querySelector(`img`);
     pinImage.src = pin.author.avatar;
     pinImage.alt = pin.offer.title;
-    pinElement.style.left = `${pin.location.x}px`; // сервер передает координаты для верхренго левого угла или острия пина?
+    pinElement.style.left = `${pin.location.x}px`;
     pinElement.style.top = `${pin.location.y}px`;
     return pinElement;
   }
@@ -24,7 +22,15 @@
     return fragment;
   }
 
+  function removePins() {
+    const mapPins = document.querySelectorAll(`.map__pin:not(.map__pin--main)`);
+    mapPins.forEach((mapPin) => {
+      mapPin.remove();
+    });
+  }
+
   window.pin = {
-    generatePins
+    generatePins,
+    removePins
   };
 })();
