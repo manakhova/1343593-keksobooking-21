@@ -69,7 +69,16 @@
     housingFeatures.addEventListener(`change`, onFilterChange);
   }
 
+  function deactivateFilter() {
+    housingType.removeEventListener(`change`, onFilterChange);
+    housingPrice.removeEventListener(`change`, onFilterChange);
+    housingRooms.removeEventListener(`change`, onFilterChange);
+    housingGuests.removeEventListener(`change`, onFilterChange);
+    housingFeatures.removeEventListener(`change`, onFilterChange);
+  }
+
   window.filter = {
-    activateFilter
+    activateFilter,
+    deactivateFilter
   };
 })();

@@ -5,7 +5,7 @@
   const {activateForm, deactivateForm, form} = window.form;
   const {generatePins} = window.pin;
   const {loadData, uploadData} = window.ajax;
-  const {activateFilter} = window.filter;
+  const {activateFilter, deactivateFilter} = window.filter;
   const main = document.querySelector(`main`);
   const pageResetButton = document.querySelector(`.ad-form__reset`);
   const SERVER_URL = `https://21.javascript.pages.academy/keksobooking/data`;
@@ -133,6 +133,7 @@
 
     deactivateMap();
     deactivateForm(mainPinAddress);
+    deactivateFilter();
 
     form.removeEventListener(`submit`, submitForm);
     pageResetButton.removeEventListener(`click`, onPageResetButtonClick);
