@@ -1,10 +1,11 @@
 'use strict';
 
 (function () {
-  const {mapPinMain, activateMap, deactivateMap, getMainPinAddress, getMainPinAddressWithTail} = window.map;
+  const {mapPinMain, activateMap, deactivateMap, getMainPinAddress, getMainPinAddressWithTail, renderPins} = window.map;
   const {activateForm, deactivateForm, form} = window.form;
   const {generatePins} = window.pin;
   const {loadData, uploadData} = window.ajax;
+  const {activateFilter} = window.filter;
   const main = document.querySelector(`main`);
   const pageResetButton = document.querySelector(`.ad-form__reset`);
   const SERVER_URL = `https://21.javascript.pages.academy/keksobooking/data`;
@@ -25,15 +26,15 @@
     errorElement.classList.add(`hidden`);
     main.appendChild(errorElement);
 
-    errorMessageButtonClose.addEventListener(`mousedown`, closeMessageClick);
-    errorMessageButtonClose.addEventListener(`keydown`, closeMessageEscKeydown);
+    errorMessageButtonClose.addEventListener(`mousedown`, onMessageButtonCloseClick);
+    errorMessageButtonClose.addEventListener(`keydown`, onMessageButtonCloseEscKeydown);
   }
 
-  function mainPinMouseDown() {
+  function onMainPinMouseDown() {
     activatePage();
   }
 
-  function mainPinKeyDown(evt) {
+  function onMainPinKeyDown(evt) {
     if (evt.key === `Enter`) {
       activatePage();
     }
@@ -55,21 +56,21 @@
     successElement.classList.remove(`hidden`);
   }
 
-  function closeMessageClick() {
+  function onMessageButtonCloseClick() {
     hideErrorMessage();
   }
 
-  function closeMessageEscKeydown(evt) {
+  function onMessageButtonCloseEscKeydown(evt) {
     if (evt.key === `Escape`) {
       hideErrorMessage();
     }
   }
 
-  function closeSuccessMessageClick() {
+  function onSuccessMessageCloseClick() {
     hideSuccessMessage();
   }
 
-  function closeSuccessMessageEscKeydown(evt) {
+  function onSuccessMessageCloseEscKeydown(evt) {
     if (evt.key === `Escape`) {
       hideSuccessMessage();
     }
@@ -85,44 +86,12 @@
     successElement.classList.add(`hidden`);
   }
 
-  function activatePage() {
-    loadData(SERVER_URL, (data) => {
-      const mainPinAddress = getMainPinAddressWithTail();
-
-      const offers = data.map(prepareOffers);
-      const pins = generatePins(offers);
-
-      mapPinMain.removeEventListener(`mousedown`, mainPinMouseDown);
-      mapPinMain.removeEventListener(`keydown`, mainPinKeyDown);
-
-      activateMap(pins, offers);
-      activateForm(mainPinAddress);
-
-      form.addEventListener(`submit`, submitForm);
-      pageResetButton.addEventListener(`click`, onPageResetButtonClick);
-    },
-    showErrorMessage);
-  }
-
-  function deactivatePage() {
-    const mainPinAddress = getMainPinAddress();
-
-    mapPinMain.addEventListener(`mousedown`, mainPinMouseDown);
-    mapPinMain.addEventListener(`keydown`, mainPinKeyDown);
-
-    deactivateMap();
-    deactivateForm(mainPinAddress);
-
-    form.removeEventListener(`submit`, submitForm);
-    pageResetButton.removeEventListener(`click`, onPageResetButtonClick);
-  }
-
   function resetPage() {
     deactivatePage();
     showSuccessMessage();
 
-    document.addEventListener(`mousedown`, closeSuccessMessageClick);
-    document.addEventListener(`keydown`, closeSuccessMessageEscKeydown);
+    document.addEventListener(`mousedown`, onSuccessMessageCloseClick);
+    document.addEventListener(`keydown`, onSuccessMessageCloseEscKeydown);
   }
 
   function onPageResetButtonClick() {
@@ -134,6 +103,41 @@
 
     uploadData(SERVER_UPLOAD_URL, new FormData(form), resetPage, showErrorMessage);
   }
+
+  function activatePage() {
+    loadData(SERVER_URL, (data) => {
+      const mainPinAddress = getMainPinAddressWithTail();
+
+      const offers = data.map(prepareOffers);
+      const pins = generatePins(offers);
+      renderPins(pins);
+
+      mapPinMain.removeEventListener(`mousedown`, onMainPinMouseDown);
+      mapPinMain.removeEventListener(`keydown`, onMainPinKeyDown);
+
+      activateMap(offers);
+      activateForm(mainPinAddress);
+      activateFilter(offers);
+
+      form.addEventListener(`submit`, submitForm);
+      pageResetButton.addEventListener(`click`, onPageResetButtonClick);
+    },
+    showErrorMessage);
+  }
+
+  function deactivatePage() {
+    const mainPinAddress = getMainPinAddress();
+
+    mapPinMain.addEventListener(`mousedown`, onMainPinMouseDown);
+    mapPinMain.addEventListener(`keydown`, onMainPinKeyDown);
+
+    deactivateMap();
+    deactivateForm(mainPinAddress);
+
+    form.removeEventListener(`submit`, submitForm);
+    pageResetButton.removeEventListener(`click`, onPageResetButtonClick);
+  }
+
 
   deactivatePage();
   initializeErrorMessage();

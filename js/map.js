@@ -2,7 +2,6 @@
 
 (function () {
   const {createCardElement} = window.card;
-  const {removePins} = window.pin;
   const map = document.querySelector(`.map`);
   const mapPins = map.querySelector(`.map__pins`);
   const mapFilter = map.querySelector(`.map__filters-container`);
@@ -32,18 +31,18 @@
     const currentCards = document.querySelectorAll(`article.map__card`);
     currentCards.forEach((card) => {
       const cardButtonClose = card.querySelector(`button.popup__close`);
-      cardButtonClose.removeEventListener(`click`, closeCardClick);
-      cardButtonClose.removeEventListener(`keydown`, closeCardEscKeydown);
+      cardButtonClose.removeEventListener(`click`, onCloseCardClick);
+      cardButtonClose.removeEventListener(`keydown`, onCloseCardEscKeydown);
 
       card.remove();
     });
   }
 
-  function closeCardClick() {
+  function onCloseCardClick() {
     removeCards();
   }
 
-  function closeCardEscKeydown(evt) {
+  function onCloseCardEscKeydown(evt) {
     if (evt.key === `Escape`) {
       removeCards();
     }
@@ -60,17 +59,26 @@
           map.insertBefore(card, mapFilter);
 
           const cardButtonClose = card.querySelector(`button.popup__close`);
-          cardButtonClose.addEventListener(`click`, closeCardClick);
-          cardButtonClose.addEventListener(`keydown`, closeCardEscKeydown);
+          cardButtonClose.addEventListener(`click`, onCloseCardClick);
+          cardButtonClose.addEventListener(`keydown`, onCloseCardEscKeydown);
         }
       }
     };
   }
 
-  function activateMap(pins, offers) {
-    map.classList.remove(`map--faded`);
+  function renderPins(pins) {
     mapPins.appendChild(pins);
+  }
 
+  function removePins() {
+    const pins = document.querySelectorAll(`.map__pin:not(.map__pin--main)`);
+    pins.forEach((pin) => {
+      pin.remove();
+    });
+  }
+
+  function activateMap(offers) {
+    map.classList.remove(`map--faded`);
     map.addEventListener(`click`, mapClickFabric(offers));
   }
 
@@ -87,6 +95,9 @@
     getMainPinAddressWithTail,
     activateMap,
     deactivateMap,
+    removeCards,
+    removePins,
+    renderPins,
     MAIN_PIN_HEIGHT,
     MAIN_PIN_TAIL_HEIGHT,
     MAIN_PIN_WIDTH,

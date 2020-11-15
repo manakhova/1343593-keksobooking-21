@@ -27,7 +27,7 @@
     });
   }
 
-  function validateCapacity() {
+  function onCapacityCheckValidity() {
     disabledCapacities();
 
     if (roomNumber.value === `1`) {
@@ -57,7 +57,7 @@
     }
   }
 
-  function validateType() {
+  function onTypeCheckValidity() {
     if (typeSelect.value === `bungalow`) {
       priceInput.min = MIN_BUNGALOW_PRICE;
       priceInput.placeholder = `0`;
@@ -80,7 +80,7 @@
     priceInput.reportValidity();
   }
 
-  function validateTitleInput() {
+  function onTitleInputCheckValidity() {
     const valueLength = titleInput.value.length;
 
     if (valueLength < MIN_TITLE_LENGTH) {
@@ -94,7 +94,7 @@
     titleInput.reportValidity();
   }
 
-  function validatePriceInput() {
+  function onPriceInputCheckValidity() {
     if (priceInput.value > 1000000) {
       priceInput.setCustomValidity(`Максимальная цена за ночь - ${MAX_PRICE}`);
     } else {
@@ -103,7 +103,7 @@
     priceInput.reportValidity();
   }
 
-  function synchronizeTime(evt) {
+  function onTimeSynchronize(evt) {
     timeIn.value = evt.target.value;
     timeOut.value = evt.target.value;
   }
@@ -119,17 +119,17 @@
       fieldsetMain.removeAttribute(`disabled`);
     });
 
-    validateCapacity();
-    validateType();
+    onCapacityCheckValidity();
+    onTypeCheckValidity();
 
     setAddressValue(`${mainPinAddress.x}, ${mainPinAddress.y}`);
 
-    roomNumber.addEventListener(`change`, validateCapacity);
-    titleInput.addEventListener(`input`, validateTitleInput);
-    priceInput.addEventListener(`input`, validatePriceInput);
-    typeSelect.addEventListener(`change`, validateType);
-    timeIn.addEventListener(`change`, synchronizeTime);
-    timeOut.addEventListener(`change`, synchronizeTime);
+    roomNumber.addEventListener(`change`, onCapacityCheckValidity);
+    titleInput.addEventListener(`input`, onTitleInputCheckValidity);
+    priceInput.addEventListener(`input`, onPriceInputCheckValidity);
+    typeSelect.addEventListener(`change`, onTypeCheckValidity);
+    timeIn.addEventListener(`change`, onTimeSynchronize);
+    timeOut.addEventListener(`change`, onTimeSynchronize);
   }
 
   function deactivateForm(mainPinAddress) {
@@ -142,12 +142,12 @@
 
     setAddressValue(`${mainPinAddress.x}, ${mainPinAddress.y}`);
 
-    roomNumber.removeEventListener(`change`, validateCapacity);
-    titleInput.removeEventListener(`input`, validateTitleInput);
-    priceInput.removeEventListener(`input`, validatePriceInput);
-    typeSelect.removeEventListener(`change`, validateType);
-    timeIn.removeEventListener(`change`, synchronizeTime);
-    timeOut.removeEventListener(`change`, synchronizeTime);
+    roomNumber.removeEventListener(`change`, onCapacityCheckValidity);
+    titleInput.removeEventListener(`input`, onTitleInputCheckValidity);
+    priceInput.removeEventListener(`input`, onPriceInputCheckValidity);
+    typeSelect.removeEventListener(`change`, onTypeCheckValidity);
+    timeIn.removeEventListener(`change`, onTimeSynchronize);
+    timeOut.removeEventListener(`change`, onTimeSynchronize);
   }
 
   window.form = {

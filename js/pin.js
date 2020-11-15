@@ -2,6 +2,7 @@
 
 (function () {
   const pinTemplate = document.querySelector(`#pin`).content.querySelector(`.map__pin`);
+  const MAX_PIN_COUNT = 5;
 
   function createPinElement(pin) {
     const pinElement = pinTemplate.cloneNode(true);
@@ -16,21 +17,14 @@
 
   function generatePins(offers) {
     const fragment = document.createDocumentFragment();
-    for (let i = 0; i < offers.length; i++) {
+    const pinsCount = offers.length > MAX_PIN_COUNT ? MAX_PIN_COUNT : offers.length;
+    for (let i = 0; i < pinsCount; i++) {
       fragment.appendChild(createPinElement(offers[i]));
     }
     return fragment;
   }
 
-  function removePins() {
-    const mapPins = document.querySelectorAll(`.map__pin:not(.map__pin--main)`);
-    mapPins.forEach((mapPin) => {
-      mapPin.remove();
-    });
-  }
-
   window.pin = {
-    generatePins,
-    removePins
+    generatePins
   };
 })();

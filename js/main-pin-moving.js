@@ -64,7 +64,7 @@
     map.removeEventListener(`mouseup`, onMouseUp);
   }
 
-  function mapPinMainMouseDown(evt) {
+  function onMapPinMainMouseDown(evt) {
     evt.preventDefault();
 
     startCoords = {
@@ -75,5 +75,5 @@
     map.addEventListener(`mousemove`, onMouseMove);
     map.addEventListener(`mouseup`, onMouseUp);
   }
-  mapPinMain.addEventListener(`mousedown`, mapPinMainMouseDown);
+  mapPinMain.addEventListener(`mousedown`, onMapPinMainMouseDown);
 })();
