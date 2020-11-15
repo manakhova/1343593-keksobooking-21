@@ -5,13 +5,16 @@
   const {generatePins} = window.pin;
   const housingType = document.querySelector(`#housing-type`);
   let filteredOffers = [];
+  let data = [];
+
 
   function filterByType(item) {
     return housingType.value === `any` || housingType.value === item.offer.type ? true : false;
   }
 
-  function onFilterChange(offers) {
-    filteredOffers = offers.filter(filterByType);
+  function onFilterChange() {
+    filteredOffers = data;
+    filteredOffers = filteredOffers.filter(filterByType);
 
     removePins();
     removeCards();
@@ -20,7 +23,8 @@
   }
 
   function activateFilter(offers) {
-    housingType.addEventListener(`change`, onFilterChange(offers));
+    data = offers;
+    housingType.addEventListener(`change`, onFilterChange);
   }
 
   window.filter = {
