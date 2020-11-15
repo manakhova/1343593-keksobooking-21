@@ -1,7 +1,7 @@
 'use strict';
 
 (function () {
-  // const {debounce} = window.utils;
+  const {debounce} = window.utils;
   const {removeCards, removePins, renderPins} = window.map;
   const {generatePins} = window.pin;
   const housingType = document.querySelector(`#housing-type`);
@@ -13,7 +13,7 @@
   let data = [];
   const LOW = 10000;
   const HIGH = 50000;
-  // const DEBOUNCE_INTERVAL = 500;
+  const DEBOUNCE_INTERVAL = 5000;
 
 
   function filterByType(item) {
@@ -46,7 +46,7 @@
     });
   }
 
-  function onFilterChange() {
+  function filter() {
     filteredOffers = data;
     filteredOffers = filteredOffers.filter(filterByType).filter(filterByPrice).filter(filterByRooms).filter(filterByGuests).filter(filterByFeatures);
 
@@ -54,6 +54,10 @@
     removeCards();
     const pins = generatePins(filteredOffers);
     renderPins(pins);
+  }
+
+  function onFilterChange() {
+    debounce(filter(), DEBOUNCE_INTERVAL);
   }
 
   function activateFilter(offers) {

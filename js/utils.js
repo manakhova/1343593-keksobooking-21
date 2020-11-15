@@ -19,7 +19,7 @@
     return items;
   }
 
-  /* function debounce(cb, timeout) {
+  function debounce(cb, timeout) {
     let timer;
     return function () {
       if (timer) {
@@ -27,12 +27,12 @@
       }
       timer = setTimeout(cb, timeout);
     };
-  } */
+  }
 
   window.utils = {
     getRandomInteger,
     getRandomProperty,
     shuffleArray,
-    // debounce
+    debounce
   };
 })();
