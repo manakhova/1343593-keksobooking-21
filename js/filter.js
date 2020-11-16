@@ -8,11 +8,10 @@ const housingPrice = document.querySelector(`#housing-price`);
 const housingRooms = document.querySelector(`#housing-rooms`);
 const housingGuests = document.querySelector(`#housing-guests`);
 const housingFeatures = document.querySelector(`#housing-features`);
-let filteredOffers = [];
 let data = [];
-const LOW = 10000;
-const HIGH = 50000;
-const DEBOUNCE_INTERVAL = 5000;
+const LOW_PRICE = 10000;
+const HIGH_PRICE = 50000;
+const DEBOUNCE_INTERVAL = 500;
 
 
 function filterByType(item) {
@@ -21,9 +20,9 @@ function filterByType(item) {
 
 function filterByPrice(item) {
   if (housingPrice.value === `any` ||
-  (housingPrice.value === `low` && item.offer.price < LOW) ||
-  (housingPrice.value === `middle` && item.offer.price >= LOW && item.offer.price < HIGH) ||
-  (housingPrice.value === `high` && item.offer.price >= HIGH)) {
+  (housingPrice.value === `low` && item.offer.price < LOW_PRICE) ||
+  (housingPrice.value === `middle` && item.offer.price >= LOW_PRICE && item.offer.price < HIGH_PRICE) ||
+  (housingPrice.value === `high` && item.offer.price >= HIGH_PRICE)) {
     return true;
   } else {
     return false;
@@ -31,23 +30,23 @@ function filterByPrice(item) {
 }
 
 function filterByRooms(item) {
-  return housingRooms.value === `any` || housingRooms.value === item.offer.rooms.toString() ? true : false;
+  return housingRooms.value === `any` || housingRooms.value === item.offer.rooms.toString();
 }
 
 function filterByGuests(item) {
-  return housingGuests.value === `any` || housingGuests.value === item.offer.guests.toString() ? true : false;
+  return housingGuests.value === `any` || housingGuests.value === item.offer.guests.toString();
 }
 
 function filterByFeatures(item) {
   const checkedFeatures = housingFeatures.querySelectorAll(`input:checked`);
   return Array.from(checkedFeatures).every((feature) => {
-    return item.offer.features.includes(feature.value) ? true : false;
+    return item.offer.features.includes(feature.value);
   });
 }
 
 function filter() {
-  filteredOffers = data;
-  filteredOffers = filteredOffers.filter(filterByType).filter(filterByPrice).filter(filterByRooms).filter(filterByGuests).filter(filterByFeatures);
+  let filteredOffers = [];
+  filteredOffers = data.filter(filterByType).filter(filterByPrice).filter(filterByRooms).filter(filterByGuests).filter(filterByFeatures);
 
   removePins();
   removeCards();
@@ -56,7 +55,8 @@ function filter() {
 }
 
 function onFilterChange() {
-  debounce(filter(), DEBOUNCE_INTERVAL);
+  const debouncedFilter = debounce(filter, DEBOUNCE_INTERVAL);
+  debouncedFilter();
 }
 
 function activateFilter(offers) {

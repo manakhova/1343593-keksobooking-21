@@ -26,7 +26,7 @@ function disabledCapacities() {
   });
 }
 
-function onCapacityCheckValidity() {
+function onRoomNumberChange() {
   disabledCapacities();
 
   if (roomNumber.value === `1`) {
@@ -56,7 +56,7 @@ function onCapacityCheckValidity() {
   }
 }
 
-function onTypeCheckValidity() {
+function onTypeChange() {
   if (typeSelect.value === `bungalow`) {
     priceInput.min = MIN_BUNGALOW_PRICE;
     priceInput.placeholder = `0`;
@@ -79,7 +79,7 @@ function onTypeCheckValidity() {
   priceInput.reportValidity();
 }
 
-function onTitleInputCheckValidity() {
+function onTitleChange() {
   const valueLength = titleInput.value.length;
 
   if (valueLength < MIN_TITLE_LENGTH) {
@@ -93,7 +93,7 @@ function onTitleInputCheckValidity() {
   titleInput.reportValidity();
 }
 
-function onPriceInputCheckValidity() {
+function onPriceChange() {
   if (priceInput.value > 1000000) {
     priceInput.setCustomValidity(`Максимальная цена за ночь - ${MAX_PRICE}`);
   } else {
@@ -102,7 +102,7 @@ function onPriceInputCheckValidity() {
   priceInput.reportValidity();
 }
 
-function onTimeSynchronize(evt) {
+function onTimeChange(evt) {
   timeIn.value = evt.target.value;
   timeOut.value = evt.target.value;
 }
@@ -118,17 +118,17 @@ function activateForm(mainPinAddress) {
     fieldsetMain.removeAttribute(`disabled`);
   });
 
-  onCapacityCheckValidity();
-  onTypeCheckValidity();
+  onRoomNumberChange();
+  onTypeChange();
 
   setAddressValue(`${mainPinAddress.x}, ${mainPinAddress.y}`);
 
-  roomNumber.addEventListener(`change`, onCapacityCheckValidity);
-  titleInput.addEventListener(`input`, onTitleInputCheckValidity);
-  priceInput.addEventListener(`input`, onPriceInputCheckValidity);
-  typeSelect.addEventListener(`change`, onTypeCheckValidity);
-  timeIn.addEventListener(`change`, onTimeSynchronize);
-  timeOut.addEventListener(`change`, onTimeSynchronize);
+  roomNumber.addEventListener(`change`, onRoomNumberChange);
+  titleInput.addEventListener(`input`, onTitleChange);
+  priceInput.addEventListener(`input`, onPriceChange);
+  typeSelect.addEventListener(`change`, onTypeChange);
+  timeIn.addEventListener(`change`, onTimeChange);
+  timeOut.addEventListener(`change`, onTimeChange);
 }
 
 function deactivateForm(mainPinAddress) {
@@ -141,12 +141,12 @@ function deactivateForm(mainPinAddress) {
 
   setAddressValue(`${mainPinAddress.x}, ${mainPinAddress.y}`);
 
-  roomNumber.removeEventListener(`change`, onCapacityCheckValidity);
-  titleInput.removeEventListener(`input`, onTitleInputCheckValidity);
-  priceInput.removeEventListener(`input`, onPriceInputCheckValidity);
-  typeSelect.removeEventListener(`change`, onTypeCheckValidity);
-  timeIn.removeEventListener(`change`, onTimeSynchronize);
-  timeOut.removeEventListener(`change`, onTimeSynchronize);
+  roomNumber.removeEventListener(`change`, onRoomNumberChange);
+  titleInput.removeEventListener(`input`, onTitleChange);
+  priceInput.removeEventListener(`input`, onPriceChange);
+  typeSelect.removeEventListener(`change`, onTypeChange);
+  timeIn.removeEventListener(`change`, onTimeChange);
+  timeOut.removeEventListener(`change`, onTimeChange);
 }
 
 window.form = {
