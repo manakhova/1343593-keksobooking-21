@@ -12,6 +12,7 @@ let data = [];
 const LOW_PRICE = 10000;
 const HIGH_PRICE = 50000;
 const DEBOUNCE_INTERVAL = 500;
+const debouncedFilter = debounce(filter, DEBOUNCE_INTERVAL);
 
 
 function filterByType(item) {
@@ -45,8 +46,7 @@ function filterByFeatures(item) {
 }
 
 function filter() {
-  let filteredOffers = [];
-  filteredOffers = data.filter(filterByType).filter(filterByPrice).filter(filterByRooms).filter(filterByGuests).filter(filterByFeatures);
+  const filteredOffers = data.filter(filterByType).filter(filterByPrice).filter(filterByRooms).filter(filterByGuests).filter(filterByFeatures);
 
   removePins();
   removeCards();
@@ -55,7 +55,6 @@ function filter() {
 }
 
 function onFilterChange() {
-  const debouncedFilter = debounce(filter, DEBOUNCE_INTERVAL);
   debouncedFilter();
 }
 
