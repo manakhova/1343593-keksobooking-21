@@ -1,17 +1,17 @@
 'use strict';
 
 (function () {
-  const {createCardElement} = window.card;
-  const map = document.querySelector(`.map`);
-  const mapPins = map.querySelector(`.map__pins`);
-  const mapFilter = map.querySelector(`.map__filters-container`);
-  const mapPinMain = document.querySelector(`.map__pin--main`);
   const MAIN_PIN_HEIGHT = 65;
   const MAIN_PIN_TAIL_HEIGHT = 22;
   const MAIN_PIN_WIDTH = 65;
   const MAP_WIDTH = 1200;
   const MAP_HEIGHT_TOP = 130;
   const MAP_HEIGHT_BOTTOM = 630;
+  const {createCardElement} = window.card;
+  const map = document.querySelector(`.map`);
+  const mapPins = map.querySelector(`.map__pins`);
+  const mapFilter = map.querySelector(`.map__filters-container`);
+  const mapPinMain = document.querySelector(`.map__pin--main`);
 
   function getMainPinAddress() {
     return {
@@ -32,8 +32,7 @@
     currentCards.forEach((card) => {
       const cardButtonClose = card.querySelector(`button.popup__close`);
       cardButtonClose.removeEventListener(`click`, onCloseCardClick);
-      cardButtonClose.removeEventListener(`keydown`, onCloseCardEscKeydown);
-
+      document.removeEventListener(`keydown`, onCloseCardEscKeydown);
       card.remove();
     });
   }
@@ -48,9 +47,15 @@
     }
   }
 
-  function mapClickFabric(offers) {
+  function onMapClickFabric(offers) {
+    let activePin;
     return function (evt) {
       if (evt.target.parentNode.classList.contains(`map__pin`)) {
+        if (activePin) {
+          activePin.classList.remove(`map__pin--active`);
+          activePin = evt.target.parentNode;
+        }
+        evt.target.parentNode.classList.add(`map__pin--active`);
         const offerId = evt.target.parentNode.dataset.offerId;
         if (offerId) {
           removeCards();
@@ -60,7 +65,7 @@
 
           const cardButtonClose = card.querySelector(`button.popup__close`);
           cardButtonClose.addEventListener(`click`, onCloseCardClick);
-          cardButtonClose.addEventListener(`keydown`, onCloseCardEscKeydown);
+          document.addEventListener(`keydown`, onCloseCardEscKeydown);
         }
       }
     };
@@ -71,7 +76,7 @@
   }
 
   function removePins() {
-    const pins = document.querySelectorAll(`.map__pin:not(.map__pin--main)`);
+    const pins = map.querySelectorAll(`.map__pin:not(.map__pin--main)`);
     pins.forEach((pin) => {
       pin.remove();
     });
@@ -79,7 +84,8 @@
 
   function activateMap(offers) {
     map.classList.remove(`map--faded`);
-    map.addEventListener(`click`, mapClickFabric(offers));
+    map.addEventListener(`click`, onMapClickFabric(offers));
+    map.addEventListener(`keydown`, onMapClickFabric(offers));
   }
 
   function deactivateMap() {
