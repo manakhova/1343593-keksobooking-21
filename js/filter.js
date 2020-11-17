@@ -19,43 +19,44 @@
   const debouncedFilter = debounce(filter, DEBOUNCE_INTERVAL);
 
 
-  function filterByType(item) {
-    return housingType.value === `any` || housingType.value === item.offer.type ? true : false;
-  }
-
-  function filterByPrice(item) {
-    return (housingPrice.value === `any` ||
-    (housingPrice.value === `low` && item.offer.price < LOW_PRICE) ||
-    (housingPrice.value === `middle` && item.offer.price >= LOW_PRICE && item.offer.price < HIGH_PRICE) ||
-    (housingPrice.value === `high` && item.offer.price >= HIGH_PRICE));
-  }
-
-  function filterByRooms(item) {
-    return housingRooms.value === `any` || housingRooms.value === item.offer.rooms.toString();
-  }
-
-  function filterByGuests(item) {
-    return housingGuests.value === `any` || housingGuests.value === item.offer.guests.toString();
-  }
-
-  function filterByFeatures(item) {
-    const checkedFeatures = housingFeatures.querySelectorAll(`input:checked`);
-    return Array.from(checkedFeatures).every((feature) => {
-      return item.offer.features.includes(feature.value);
-    });
-  }
-
-  function filter() {
-    const filteredOffers = data.filter(filterByType).filter(filterByPrice).filter(filterByRooms).filter(filterByGuests).filter(filterByFeatures);
-
-    removePins();
-    removeCards();
-    const pins = generatePins(filteredOffers);
-    renderPins(pins);
-  }
-
   function onFilterChange() {
     debouncedFilter();
+  }
+
+  function filter(offers) {
+    const filteredOffers = [];
+    for (let i = 0; i < 10; i++) {
+      if (housingType) {
+        return housingType.value === `any` || housingType.value === offers[i].offer.type ? true : false;
+      }
+
+      if (housingPrice) {
+        return (housingPrice.value === `any` ||
+        (housingPrice.value === `low` && offers[i].offer.price < LOW_PRICE) ||
+        (housingPrice.value === `middle` && offers[i].offer.price >= LOW_PRICE && offers[i].offer.price < HIGH_PRICE) ||
+        (housingPrice.value === `high` && offers[i].offer.price >= HIGH_PRICE));
+      }
+
+      if (housingRooms) {
+        return housingRooms.value === `any` || housingRooms.value === offers[i].offer.rooms.toString();
+      }
+
+      if (housingGuests) {
+        return housingGuests.value === `any` || housingGuests.value === offers[i].offer.guests.toString();
+      }
+
+      if (housingFeatures) {
+        const checkedFeatures = housingFeatures.querySelectorAll(`input:checked`);
+        return Array.from(checkedFeatures).every((feature) => {
+          return offers[i].offer.features.includes(feature.value);
+        });
+      }
+
+      filteredOffers.push(offers[i]);
+      if (filteredOffers === 5) {
+        break;
+      }
+    }
   }
 
   function activateFilter(offers) {

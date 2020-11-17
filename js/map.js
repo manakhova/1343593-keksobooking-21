@@ -41,11 +41,13 @@
 
   function onCloseCardClick() {
     removeCards();
+    activePin.classList.remove(`map__pin--active`);
   }
 
   function onCloseCardEscKeydown(evt) {
     if (evt.key === `Escape`) {
       removeCards();
+      activePin.classList.remove(`map__pin--active`);
     }
   }
 
