@@ -12,6 +12,8 @@
   const mapPins = map.querySelector(`.map__pins`);
   const mapFilter = map.querySelector(`.map__filters-container`);
   const mapPinMain = document.querySelector(`.map__pin--main`);
+  let savedOffers = [];
+  let activePin;
 
   function getMainPinAddress() {
     return {
@@ -47,28 +49,36 @@
     }
   }
 
-  function onMapClickFabric(offers) {
-    let activePin;
-    return function (evt) {
-      if (evt.target.parentNode.classList.contains(`map__pin`)) {
-        if (activePin) {
-          activePin.classList.remove(`map__pin--active`);
-          activePin = evt.target.parentNode;
-        }
-        evt.target.parentNode.classList.add(`map__pin--active`);
-        const offerId = evt.target.parentNode.dataset.offerId;
-        if (offerId) {
-          removeCards();
+  function openCard(currentPin) {
+    if (activePin) {
+      activePin.classList.remove(`map__pin--active`);
+    }
+    activePin = currentPin;
+    activePin.classList.add(`map__pin--active`);
 
-          const card = createCardElement(offers[offerId]);
-          map.insertBefore(card, mapFilter);
+    const offerId = currentPin.dataset.offerId;
+    if (offerId) {
+      removeCards();
 
-          const cardButtonClose = card.querySelector(`button.popup__close`);
-          cardButtonClose.addEventListener(`click`, onCloseCardClick);
-          document.addEventListener(`keydown`, onCloseCardEscKeydown);
-        }
-      }
-    };
+      const card = createCardElement(savedOffers[offerId]);
+      map.insertBefore(card, mapFilter);
+
+      const cardButtonClose = card.querySelector(`button.popup__close`);
+      cardButtonClose.addEventListener(`click`, onCloseCardClick);
+      document.addEventListener(`keydown`, onCloseCardEscKeydown);
+    }
+  }
+
+  function onMapClick(evt) {
+    if (evt.target.parentNode.classList.contains(`map__pin`)) {
+      openCard(evt.target.parentNode);
+    }
+  }
+
+  function onMapKeyDown(evt) {
+    if (evt.key === `Enter`) {
+      openCard(evt.target);
+    }
   }
 
   function renderPins(pins) {
@@ -83,15 +93,19 @@
   }
 
   function activateMap(offers) {
+    savedOffers = offers;
     map.classList.remove(`map--faded`);
-    map.addEventListener(`click`, onMapClickFabric(offers));
-    map.addEventListener(`keydown`, onMapClickFabric(offers));
+    map.addEventListener(`click`, onMapClick);
+    map.addEventListener(`keydown`, onMapKeyDown);
   }
 
   function deactivateMap() {
     removePins();
     removeCards();
+
     map.classList.add(`map--faded`);
+    map.removeEventListener(`click`, onMapClick);
+    map.removeEventListener(`keydown`, onMapKeyDown);
   }
 
   window.map = {

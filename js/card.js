@@ -48,9 +48,21 @@
     offerElement.querySelector(`.popup__type`).textContent = Type[offer.offer.type];
     offerElement.querySelector(`.popup__text--capacity`).textContent = `${offer.offer.rooms} комнат(-a/-ы) для ${offer.offer.guests} гостей`;
     offerElement.querySelector(`.popup__text--time`).textContent = `Заезд после ${offer.offer.checkin}, выезд до ${offer.offer.checkout}`;
-    offerElement.querySelector(`.popup__features`).appendChild(generateFeatures(offer.offer.features));
+
+    if (offer.offer.features.length > 0) {
+      offerElement.querySelector(`.popup__features`).appendChild(generateFeatures(offer.offer.features));
+    } else {
+      offerElement.querySelector(`.popup__features`).classList.add(`hidden`);
+    }
+
     offerElement.querySelector(`.popup__description`).textContent = offer.offer.description;
-    offerElement.querySelector(`.popup__photos`).appendChild(generatePhotos(offer.offer.photos));
+
+    if (offer.offer.photos.length > 0) {
+      offerElement.querySelector(`.popup__photos`).appendChild(generatePhotos(offer.offer.photos));
+    } else {
+      offerElement.querySelector(`.popup__photos`).classList.add(`hidden`);
+    }
+
     offerElement.dataset.id = offer.id;
     return offerElement;
   }
