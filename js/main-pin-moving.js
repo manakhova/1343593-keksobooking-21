@@ -2,11 +2,12 @@
 
 (function () {
   const {map, mapPinMain, getMainPinAddressWithTail, MAIN_PIN_HEIGHT, MAIN_PIN_TAIL_HEIGHT, MAIN_PIN_WIDTH, MAP_WIDTH, MAP_HEIGHT_TOP, MAP_HEIGHT_BOTTOM} = window.map;
-  const {setAddressValue} = window.form;
   const MAIN_PIN_TOP_LIMIT = MAP_HEIGHT_TOP - MAIN_PIN_HEIGHT - MAIN_PIN_TAIL_HEIGHT;
   const MAIN_PIN_BOTTOM_LIMIT = MAP_HEIGHT_BOTTOM - MAIN_PIN_HEIGHT - MAIN_PIN_TAIL_HEIGHT;
   const MAIN_PIN_LEFT_LIMIT = -MAIN_PIN_WIDTH / 2;
   const MAIN_PIN_RIGHT_LIMIT = MAP_WIDTH - MAIN_PIN_WIDTH / 2;
+  const {setAddressValue} = window.form;
+
 
   let startCoords = {
     x: mapPinMain.offsetLeft,

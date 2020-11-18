@@ -6,7 +6,7 @@
   const DEBOUNCE_INTERVAL = 500;
   const {debounce} = window.utils;
   const {removeCards, removePins, renderPins} = window.map;
-  const {generatePins} = window.pin;
+  const {generatePins, MAX_PIN_COUNT} = window.pin;
   const mapFilter = document.querySelector(`.map__filters`);
   const filterItems = mapFilter.querySelectorAll(`.map__filter`);
   const filterFeatureItems = mapFilter.querySelector(`.map__features`);
@@ -15,48 +15,53 @@
   const housingRooms = document.querySelector(`#housing-rooms`);
   const housingGuests = document.querySelector(`#housing-guests`);
   const housingFeatures = document.querySelector(`#housing-features`);
-  let data = [];
   const debouncedFilter = debounce(filter, DEBOUNCE_INTERVAL);
+  let data = [];
 
-
-  function onFilterChange() {
-    debouncedFilter();
-  }
-
-  function filter(offers) {
+  function filter() {
     const filteredOffers = [];
-    for (let i = 0; i < 10; i++) {
-      if (housingType) {
-        return housingType.value === `any` || housingType.value === offers[i].offer.type ? true : false;
+    for (let i = 0; i < data.length; i++) {
+      if (housingType.value !== `any` && data[i].offer.type !== housingType.value) {
+        continue;
       }
 
-      if (housingPrice) {
-        return (housingPrice.value === `any` ||
-        (housingPrice.value === `low` && offers[i].offer.price < LOW_PRICE) ||
-        (housingPrice.value === `middle` && offers[i].offer.price >= LOW_PRICE && offers[i].offer.price < HIGH_PRICE) ||
-        (housingPrice.value === `high` && offers[i].offer.price >= HIGH_PRICE));
+      if (housingPrice.value !== `any` &&
+        housingPrice.value === `low` && data[i].offer.price >= LOW_PRICE ||
+        housingPrice.value === `middle` && (data[i].offer.price < LOW_PRICE || data[i].offer.price >= HIGH_PRICE) ||
+        housingPrice.value === `high` && data[i].offer.price < HIGH_PRICE) {
+        continue;
       }
 
-      if (housingRooms) {
-        return housingRooms.value === `any` || housingRooms.value === offers[i].offer.rooms.toString();
+      if (housingRooms.value !== `any` && data[i].offer.rooms.toString() !== housingRooms.value) {
+        continue;
       }
 
-      if (housingGuests) {
-        return housingGuests.value === `any` || housingGuests.value === offers[i].offer.guests.toString();
+      if (housingGuests.value !== `any` && data[i].offer.guests.toString() !== housingGuests.value) {
+        continue;
       }
 
-      if (housingFeatures) {
-        const checkedFeatures = housingFeatures.querySelectorAll(`input:checked`);
-        return Array.from(checkedFeatures).every((feature) => {
-          return offers[i].offer.features.includes(feature.value);
-        });
+      const checkedFeatures = housingFeatures.querySelectorAll(`input:checked`);
+      for (let j = 0; j < checkedFeatures.length; j++) {
+        if (data[i].offer.features.indexOf(checkedFeatures[j].value) === -1) {
+          continue;
+        }
       }
 
-      filteredOffers.push(offers[i]);
-      if (filteredOffers === 5) {
+      filteredOffers.push(data[i]);
+      if (filteredOffers.length === MAX_PIN_COUNT) {
         break;
       }
     }
+
+    removeCards();
+    removePins();
+
+    const pins = generatePins(filteredOffers);
+    renderPins(pins);
+  }
+
+  function onFilterChange() {
+    debouncedFilter();
   }
 
   function activateFilter(offers) {

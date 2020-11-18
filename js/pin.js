@@ -27,7 +27,8 @@
   }
 
   window.pin = {
-    generatePins
+    generatePins,
+    MAX_PIN_COUNT
   };
 
 })();
